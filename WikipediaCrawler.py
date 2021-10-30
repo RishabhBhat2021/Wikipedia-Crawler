@@ -7,7 +7,9 @@ home_page = "https://en.wikipedia.org/"
 
 search = str(input("Enter anything to search: "))
 
-while search != "Philosophy":
+words_check = [search]
+
+while search != "Philosophy" and words_check.count(search) <= 1:
     search_page = home_page + "wiki/" + search
 
     request = requests.get(search_page)
@@ -31,13 +33,22 @@ while search != "Philosophy":
     string=re.sub("\(.*?\)","()",first_paragraph_s) 
     cut_para = BeautifulSoup(string, 'lxml')
 
-    for tag in cut_para.find_all('a'):
-        if tag.text[0] == "[":
-            tag.decompose()
+    try:
+        for tag in cut_para.find_all('a'):
+            if tag.text[0] == "[":
+                tag.decompose()
+    except:
+        pass
 
     # print(cut_para.find('a'))
 
-    if cut_para.find('a') != None:
-        search = cut_para.find('a').attrs['title']
+    try:
+        if cut_para.find('a') != None:
+            search = cut_para.find('a').attrs['title']
+    except:
+        pass
 
-    print(search)
+    if search not in words_check:
+        print(search)
+
+    words_check.append(search)
